@@ -6,33 +6,38 @@ import styled from "styled-components";
 
 export default function Banner() {
   const [movie, setMovie] = useState({});
-  const [isClicked, setIsClicked] = useState(false);
+  const [haveVideos, setHaveVideos] = useState(false);
 
+  // TODO 왜 의존성 배열을 없애면 무조건 실행되는가?
+  // useState의 setXXX를 실행시키면 컴포넌트가 재렌더링이 된다.
   useEffect(() => {
-    fetchData();
-  }, []);
+    fetchMovies()
+  }, [])
 
-  const fetchData = async () => {
-    const request = await MovieApiClient.get(MovieApiRequests.fetchNowPlaying);
-    const randomMovieId =
-      request.data.results[
-        Math.floor(Math.random() * request.data.results.length)
-      ].id;
-    const { data: movieDetail } = await MovieApiClient.get(
-      `movie/${randomMovieId}`,
-      {
-        params: { append_to_response: "videos" },
-      }
-    );
-    setMovie(movieDetail);
-  };
+  const fetchMovies = async () => {
+    const { data: response } = await MovieApiClient.get(MovieApiRequests.fetchNowPlaying)
+    const movieId = response.results[pickRandomIndex(response.results.length)].id
+    const { data: movie } = await MovieApiClient.get(`/movie/${movieId}`, {
+      params: { append_to_response: "videos" }
+    })
+    setMovie(movie)
+  }
+
+  const pickRandomIndex = (length) => {
+    return Math.floor(Math.random() * length)
+  }
 
   const truncate = (title, n) => {
-    console.log(movie)
     return title?.length > 100 ? title.substr(0, n - 1) + "..." : title;
-  };
+  }
 
-  if (!isClicked) {
+  const checkHaveVideo = () => {
+    if (movie.videos.results.length > 0) {
+      setHaveVideos(true)
+    }
+  }
+
+  if (!haveVideos) {
     return (
       <header
         className="banner"
@@ -47,14 +52,14 @@ export default function Banner() {
           <div className="banner__buttons">
             <button
               className="banner__button play"
-              onClick={() => setIsClicked(true)}
+              onClick={checkHaveVideo}
             >
               Play
             </button>
             <button className="banner__button info">More Information</button>
           </div>
           <h1 className="banner__description">
-            {truncate(movie.overview, 100)}
+            { truncate(movie.overview, 100) }
           </h1>
         </div>
         <div className="banner--fadeBottom" />
