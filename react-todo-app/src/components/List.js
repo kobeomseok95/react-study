@@ -1,7 +1,13 @@
 import React, { useState } from "react";
 
-const List = React.memo(
-  ({ data, todoData, setTodoData, provided, snapshot, handleClick }) => {
+const List = React.memo(({ 
+  data, 
+  todoData, 
+  setTodoData, 
+  provided, 
+  snapshot, 
+  handleClick,
+}) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editedTitle, setEditedTitle] = useState(data.name);
 
@@ -22,7 +28,6 @@ const List = React.memo(
     const handleSubmit = (changedDataId, event) => {
       event.preventDefault();
       
-      console.log(editedTitle)
       let newTodoData = todoData.map((data) => {
         if(data.id === changedDataId) {
           data.name = editedTitle

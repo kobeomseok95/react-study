@@ -27,4 +27,4 @@ function Form({ value, setValue, handleSubmit }) {
   )
 }
 
-export default Form
+export default React.memo(Form)
