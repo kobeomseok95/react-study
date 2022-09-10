@@ -8,8 +8,6 @@ export default function Banner() {
   const [movie, setMovie] = useState({});
   const [haveVideos, setHaveVideos] = useState(false);
 
-  // TODO 왜 의존성 배열을 없애면 무조건 실행되는가?
-  // useState의 setXXX를 실행시키면 컴포넌트가 재렌더링이 된다.
   useEffect(() => {
     fetchMovies()
   }, [])
@@ -50,12 +48,10 @@ export default function Banner() {
         <div className="banner__contents">
           <h1>{movie.title}</h1>
           <div className="banner__buttons">
-            <button
-              className="banner__button play"
-              onClick={checkHaveVideo}
-            >
-              Play
-            </button>
+            {
+              (movie.videos?.results.length > 0) 
+                && <button className="banner__button play" onClick={checkHaveVideo}> Play </button>
+            }
             <button className="banner__button info">More Information</button>
           </div>
           <h1 className="banner__description">
